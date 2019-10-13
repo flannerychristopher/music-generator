@@ -1,3 +1,4 @@
+require 'byebug'
 require 'midilib/sequence'
 require 'midilib/consts'
 
@@ -50,26 +51,18 @@ class AmericanMinimalism
     rhythm = Rhythm.new
 
     rhythm.events.each do |duration|
-      pitch = melody_pitches.sample
+      pitch = compose_next_pitch(@melody.events.last&.note, melody_pitches)
       velocity = velocities.sample
       @melody.events << NoteOn.new(0, pitch, velocity, 0)
       @melody.events << NoteOff.new(0, pitch, velocity, duration)
     end
 
-    4.times { write_events_to_track(@melody.events, @track0) }
+    @melody.events += permute_note_events(@melody.events.clone, melody_pitches)
+
+    # 4.times { write_events_to_track(@melody.events, @track0) }
+    4.times { @track0.events += @melody.events }
 
 
-    # make a variation with a few notes altered
-    # melody_variation = @melody.events.map(&:clone)
-    # even_numbers = (8..31).to_a.reject(&:odd?)
-    # 2.times do
-    #   begin
-    #     new_pitch = melody_pitches.sample
-    #     index     = even_numbers.sample
-    #     melody_variation[index].note     = new_pitch
-    #     melody_variation[index + 1].note = new_pitch
-    #   end
-    # end
 
     # melody_variation.each do |note_event|
     #   @track0.events << note_event
@@ -90,8 +83,39 @@ class AmericanMinimalism
     # end
   end
 
+  def compose_next_pitch(previous_pitch, melody_pitches)
+    return melody_pitches.sample if previous_pitch.nil?
+
+    return melody_pitches.sample unless (-1..5).to_a.sample.positive?
+
+    previous_pitch_index = melody_pitches.index(previous_pitch)
+    next_pitch_index = previous_pitch_index + [-1, 1].sample
+    melody_pitches[next_pitch_index]
+  end
+
+  def permute_note_events(events, pitches)
+    indexes = (0..events.length).reject(&:odd?).to_a.shuffle.take(4)
+    indexes.each do |index|
+      new_pitch = pitches.sample
+      events[index].note = new_pitch     # NoteOn
+      events[index + 1].note = new_pitch # NoteOff
+    end
+    events
+
+
+    # even_numbers = (8..31).to_a.reject(&:odd?)
+    # 2.times do
+    #   begin
+    #     new_pitch = melody_pitches.sample
+    #     index     = even_numbers.sample
+    #     melody_variation[index].note     = new_pitch
+    #     melody_variation[index + 1].note = new_pitch
+    #   end
+    # end
+  end
+
   def write_events_to_track(events, track)
-    events.each { |event| track.events << event }
+    track.events += events
   end
 
   def write_midi_file

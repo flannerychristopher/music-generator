@@ -1,12 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (11.0.1)
     midilib (2.0.5)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   midilib
 
 BUNDLED WITH
