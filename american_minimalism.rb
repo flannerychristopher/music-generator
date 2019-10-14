@@ -2,14 +2,16 @@ require 'byebug'
 require 'midilib/sequence'
 require 'midilib/consts'
 
-require './tonality'
+require './bass'
 require './melody'
+require './ostinato'
 require './rhythm'
+require './tonality'
 
 class AmericanMinimalism
   include MIDI
 
-  def initialize(melody:, tonality:)
+  def initialize
     # A MIDI::Sequence contains MIDI::Track objects.
     @seq = Sequence.new
 
@@ -21,101 +23,68 @@ class AmericanMinimalism
     @track0.name = 'melody'
     @track0.events << Tempo.new(tempo)
 
-    # @track1 = Track.new(@seq)
-    # @seq.tracks << @track1
-    # @track1.name = 'bass'
+    @track1 = Track.new(@seq)
+    @seq.tracks << @track1
+    @track1.name = 'bass'
+
+    @track2 = Track.new(@seq)
+    @seq.tracks << @track2
+    @track1.name = 'ostinato'
 
     # set the tonality aka scale
-    @tonality = tonality
-    @melody = melody
+    @tonality = Tonality.new
+    @melody = Melody.new
+    @bass = Bass.new
+    @ostinato = Ostinato.new
   end
 
   def perform
     melody_pitches = @tonality.melody_pitches
-    compose_melody(melody_pitches)
+    melody_velocities = (50..75).to_a + [0, 0, 0, 0]
+    compose_line(line: @melody,
+                   pitches: melody_pitches,
+                   velocities: melody_velocities,
+                   rhythm: Rhythm.new)
 
-    # bass_pitches = @tonality.melody_pitches
-    # composs_bass(bass_pitches)
+    bass_pitches = @tonality.bass_pitches
+    bass_rhythm = Rhythm.new(durations: [960, 480])
+    compose_line(line: @bass,
+                 pitches: bass_pitches,
+                 velocities: (50..70).to_a,
+                 rhythm: bass_rhythm)
+
+    compose_line(line: @ostinato,
+                 pitches: bass_pitches[0..0],
+                 velocities: (50..65).to_a,
+                 rhythm: Rhythm.new)
+
+    4.times { @track0.events += @melody.events }
+    4.times { @track1.events += @bass.events }
+    4.times { @track2.events += @ostinato.events }
 
     write_midi_file
   end
 
   private
 
-  def compose_melody(melody_pitches)
-    # take a breath
-
-    # set a range of medium velocity (how 'hard' the pitch is struck)
-    velocities = (60..95).to_a + [0, 0, 0, 0]
-
-    rhythm = Rhythm.new
-
+  def compose_line(line:, pitches:, velocities:, rhythm:)
     rhythm.events.each do |duration|
-      pitch = compose_next_pitch(@melody.events.last&.note, melody_pitches)
+      pitch = line.compose_next_pitch(line.events.last&.note, pitches)
       velocity = velocities.sample
-      @melody.events << NoteOn.new(0, pitch, velocity, 0)
-      @melody.events << NoteOff.new(0, pitch, velocity, duration)
+      line.events << NoteOn.new(0, pitch, velocity, 0)
+      line.events << NoteOff.new(0, pitch, velocity, duration)
     end
-
-    @melody.events += permute_note_events(@melody.events.clone, melody_pitches)
-
-    # 4.times { write_events_to_track(@melody.events, @track0) }
-    4.times { @track0.events += @melody.events }
-
-
-
-    # melody_variation.each do |note_event|
-    #   @track0.events << note_event
-    # end
-
-    # base_pitch = 40
-
-    # 8.times do
-    #   pitch = base_pitch + bass_pitch_offsets.sample
-    #   velocity = velocities.sample
-    #   bass_line << NoteOn.new(0, pitch, velocity, 0)
-    #   bass_line << NoteOff.new(0, pitch, velocity, 960)
-    # end
-    # 3.times do
-    #   bass_line.each do |note_event|
-    #     @track1.events << note_event
-    #   end
-    # end
-  end
-
-  def compose_next_pitch(previous_pitch, melody_pitches)
-    return melody_pitches.sample if previous_pitch.nil?
-
-    return melody_pitches.sample unless (-1..5).to_a.sample.positive?
-
-    previous_pitch_index = melody_pitches.index(previous_pitch)
-    next_pitch_index = previous_pitch_index + [-1, 1].sample
-    melody_pitches[next_pitch_index]
   end
 
   def permute_note_events(events, pitches)
     indexes = (0..events.length).reject(&:odd?).to_a.shuffle.take(4)
+
     indexes.each do |index|
       new_pitch = pitches.sample
       events[index].note = new_pitch     # NoteOn
       events[index + 1].note = new_pitch # NoteOff
     end
     events
-
-
-    # even_numbers = (8..31).to_a.reject(&:odd?)
-    # 2.times do
-    #   begin
-    #     new_pitch = melody_pitches.sample
-    #     index     = even_numbers.sample
-    #     melody_variation[index].note     = new_pitch
-    #     melody_variation[index + 1].note = new_pitch
-    #   end
-    # end
-  end
-
-  def write_events_to_track(events, track)
-    track.events += events
   end
 
   def write_midi_file
@@ -124,9 +93,4 @@ class AmericanMinimalism
   end
 end
 
-AmericanMinimalism
-  .new(
-    melody: Melody.new,
-    tonality: Tonality.new
-  )
-  .perform
+AmericanMinimalism.new.perform

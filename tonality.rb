@@ -4,7 +4,7 @@
 class Tonality
   attr_accessor :pitches
 
-  def initialize(scale = [0, 2, 4, 5, 7, 9, 11])
+  def initialize(scale = [0, 2, 4, 7, 9])
     @pitches = []
 
     12.step(108, 12) do |octave_pitch|
@@ -19,6 +19,7 @@ class Tonality
   end
 
   def bass_pitches
-
+    range = (12..16).to_a.sample
+    @pitches[0..range]
   end
 end
