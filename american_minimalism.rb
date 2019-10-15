@@ -24,7 +24,7 @@ class AmericanMinimalism < Composition
     compose_line(line: @melody,
                  pitches: @tonality.melody_pitches,
                  velocities: melody_velocities,
-                 rhythm: Rhythm.new)
+                 rhythm: Rhythm.new(length: 3840))
 
     bass_rhythm = Rhythm.new(durations: [960, 480])
     compose_line(line: @bass,
@@ -35,7 +35,7 @@ class AmericanMinimalism < Composition
     compose_line(line: @ostinato,
                  pitches: @tonality.bass_pitches[0..0],
                  velocities: (50..65).to_a,
-                 rhythm: Rhythm.new)
+                 rhythm: Rhythm.new(length: 1920))
 
     write_lines_to_tracks
     write_midi_file
@@ -55,13 +55,13 @@ class AmericanMinimalism < Composition
   end
 
   def write_lines_to_tracks
-    6.times { @ostinato_track.events += @ostinato.events }
+    16.times { @ostinato_track.events += @ostinato.events }
 
-    @melody_track.events << NoteOff.new(0, 0, 0, 7680)
-    5.times { @melody_track.events += @melody.events }
+    @melody_track.events << NoteOff.new(0, 0, 0, 3840) # rest 8 beats
+    7.times { @melody_track.events += @melody.events }
 
-    @bass_track.events << NoteOff.new(0, 0, 0, 15_340)
-    4.times { @bass_track.events += @bass.events }
+    @bass_track.events << NoteOff.new(0, 0, 0, 7680) # rest 16 beats
+    3.times { @bass_track.events += @bass.events }
   end
 end
 

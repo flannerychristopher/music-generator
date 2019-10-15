@@ -20,6 +20,6 @@ class Tonality
 
   def bass_pitches
     range = (12..16).to_a.sample
-    @pitches[0..range]
+    @pitches[5..(5 +range)]
   end
 end

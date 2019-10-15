@@ -25,7 +25,8 @@ class Composition
 
   def compose_line(line:, pitches:, velocities:, rhythm:)
     rhythm.events.each do |duration|
-      pitch = line.compose_next_pitch(line.events.map(&:note), pitches)
+      previous_pitches = line.events.map(&:note)
+      pitch = line.compose_next_pitch(previous_pitches, pitches)
       velocity = velocities.sample
       line.events << NoteOn.new(0, pitch, velocity, 0)
       line.events << NoteOff.new(0, pitch, velocity, duration)
