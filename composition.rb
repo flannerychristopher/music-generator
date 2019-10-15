@@ -18,12 +18,13 @@ class Composition
   private
 
   def create_track
-    # MIDI::Track object contains series of events
+    # MIDI::Track object will contain NoteOn and NoteOff objects.
     track = Track.new(@seq)
     @seq.tracks << track
     track
   end
 
+  # combine the pitches, velocities, and rhythm as dicated by Line (melody, bass, tone row, etc...)
   def compose_line(line:, pitches:, velocities:, rhythm:)
     rhythm.events.each do |duration|
       previous_pitches = line.events.map(&:note)

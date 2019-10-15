@@ -43,17 +43,6 @@ class AmericanMinimalism < Composition
 
   private
 
-  def permute_note_events(events, pitches)
-    indexes = (0..events.length).reject(&:odd?).to_a.shuffle.take(4)
-
-    indexes.each do |index|
-      new_pitch = pitches.sample
-      events[index].note = new_pitch     # NoteOn
-      events[index + 1].note = new_pitch # NoteOff
-    end
-    events
-  end
-
   def write_lines_to_tracks
     16.times { @ostinato_track.events += @ostinato.events }
 

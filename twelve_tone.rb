@@ -16,10 +16,12 @@ class TwelveTone < Composition
   def perform
     velocities = [70]
 
+    # pick 12 of them and shuffle them
     pitches = @tonality.pitches[50..61].shuffle
 
     durations = [480]
     rhythm_length = 480 * pitches.length
+    # rhythm.events holds an array of durations
     rhythm = Rhythm.new(length: rhythm_length, durations: durations)
 
     compose_line(line: @tone_row,
@@ -27,7 +29,8 @@ class TwelveTone < Composition
                  velocities: velocities,
                  rhythm: rhythm)
 
-      @track.events += @tone_row.events
+    # write the line events to the track
+    @track.events += @tone_row.events
 
       write_midi_file
   end
