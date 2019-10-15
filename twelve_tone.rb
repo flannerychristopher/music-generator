@@ -16,10 +16,9 @@ class TwelveTone < Composition
   def perform
     velocities = [70]
 
-    pitches = @tonality.pitches[50..61]
+    pitches = @tonality.pitches[50..61].shuffle
 
     durations = [480]
-
     rhythm_length = 480 * pitches.length
     rhythm = Rhythm.new(length: rhythm_length, durations: durations)
 

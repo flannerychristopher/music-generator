@@ -18,6 +18,7 @@ class Composition
   private
 
   def create_track
+    # MIDI::Track object contains series of events
     track = Track.new(@seq)
     @seq.tracks << track
     track
@@ -27,7 +28,9 @@ class Composition
     rhythm.events.each do |duration|
       previous_pitches = line.events.map(&:note)
       pitch = line.compose_next_pitch(previous_pitches, pitches)
+
       velocity = velocities.sample
+
       line.events << NoteOn.new(0, pitch, velocity, 0)
       line.events << NoteOff.new(0, pitch, velocity, duration)
     end
