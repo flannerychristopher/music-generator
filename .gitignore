@@ -1,2 +1,2 @@
-midi/
-presentation.key
+midi/*
+.DS_Store
