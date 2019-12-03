@@ -10,8 +10,18 @@ class Tonality
     @scale = format_scale(scale)
   end
 
+  # def pitches
+  #   map_octaves(@scale)
+  # end
+
   def pitches
-    map_octaves(@scale)
+    result = []
+    root_pitch = @scale.first
+    root_pitch.step(127, 12) do |octave_of_root_pitch|
+      new_octave = map_octave(octave_of_root_pitch)
+      result += new_octave
+    end
+    result
   end
 
   def root_pitches
@@ -36,14 +46,22 @@ class Tonality
 
   private
 
-  def map_octaves(scale)
-    result = []
-    root_pitch = scale.first
-    root_pitch.step(127, 12) do |octave_pitch|
-      new_octave = scale.map { |pitch| pitch + octave_pitch }
-      result += new_octave
+  # def map_octaves scale
+  #   result = []
+  #   root_pitch = scale.first
+  #   root_pitch.step(127, 12) do |octave_pitch|
+  #     new_octave = scale.map { |pitch| pitch + octave_pitch }
+  #     result += new_octave
+  #   end
+  #   result
+  # end
+
+
+  def map_octave octave_of_root_pitch
+    @scale.filter_map do |pitch|
+      octave_of_pitch = (octave_of_root_pitch + pitch)
+      octave_of_pitch unless octave_of_pitch > 127
     end
-    result
   end
 
   def format_scale(scale)
