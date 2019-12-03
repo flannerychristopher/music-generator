@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require './chord'
+# require './chord'
 
 # Build a Tonality
 class Tonality
+  attr_accessor :scale
+
   def initialize(scale = [0, 2, 4, 7, 9])
     @scale = format_scale(scale)
   end
@@ -23,18 +25,18 @@ class Tonality
 
   def bass_pitches
     range = (12..16).to_a.sample
-    pitches[12..(12 +range)]
+    pitches[12..(12 + range)]
   end
 
-  def chords
-    @scale.reduce([]) do |pitch|
-      Chord.new(root: pitch, pitches: tonality.pitches)
-    end
-  end
+  # def chords
+  #   @scale.reduce([]) do |pitch|
+  #     Chord.new(root: pitch, pitches: tonality.pitches)
+  #   end
+  # end
 
   private
 
-  def map_octaves scale
+  def map_octaves(scale)
     result = []
     root_pitch = scale.first
     root_pitch.step(127, 12) do |octave_pitch|
@@ -45,9 +47,11 @@ class Tonality
   end
 
   def format_scale(scale)
-    scale.reduce([]) do |memo, pitch|
+    formatted_scale = scale.each_with_object([]) do |pitch, memo|
       low_pitch = pitch % 12
       memo << low_pitch unless memo.include?(low_pitch)
+      memo
     end
+    formatted_scale.sort
   end
 end
