@@ -10,22 +10,18 @@ class Tonality
     @scale = format_scale(scale)
   end
 
-  # def pitches
-  #   map_octaves(@scale)
-  # end
-
   def pitches
     result = []
-    root_pitch = @scale.first
-    root_pitch.step(127, 12) do |octave_of_root_pitch|
-      new_octave = map_octave(octave_of_root_pitch)
+    lowest_pitch = @scale.first
+    lowest_pitch.step(127, 12) do |octave_of_lowest_pitch|
+      new_octave = map_octave(octave_of_lowest_pitch)
       result += new_octave
     end
     result
   end
 
   def root_pitches
-    map_octaves([@scale.first])
+    map_octave(@scale.first)
   end
 
   def melody_pitches
