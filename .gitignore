@@ -2,3 +2,4 @@ midi/*
 !midi/.keep
 .DS_Store
 .byebug_history
+.irb_history
