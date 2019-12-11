@@ -68,11 +68,40 @@ describe Tonality do
     end
   end
 
-  describe '#root_pitches' do
+  describe '#octave_pitches' do
     context 'the @scale is major' do
-      parameter = [0, 2, 4, 5, 7, 9, 11]
-      expected_result = [0, 12, 24, 36, 48, 60, 72, 84, 96, 104, 116]
-      # it_behaves_like 'it returns the expected result', :root_pitches, parameter, expected_result
+      let!(:expected_result) { [0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120] }
+      let(:scale) { [0, 2, 4, 5, 7, 9, 11] }
+      let(:class_instance) { described_class.new(scale) }
+
+      it 'repeats a the 0 pitch' do
+        expect(class_instance.octave_pitches(0)).to eq expected_result
+      end
+
+      it 'repeats the 120 pitch' do
+        expect(class_instance.octave_pitches(120)).to eq expected_result
+      end
+
+      it 'repeats a pitch not in the tonality' do
+        result = expected_result.map { |i| i + 1 }
+        expect(class_instance.octave_pitches(61)).to eq result
+        result = expected_result.map { |i| i + 3 }
+        expect(class_instance.octave_pitches(63)).to eq result
+      end
+    end
+  end
+
+  describe '#bass_pitches' do
+    let(:class_instance) { described_class.new }
+    it 'returns a subset of pitches' do
+      expect(class_instance.melody_pitches.length).to be < class_instance.pitches.length
+    end
+  end
+
+  describe '#bass_pitches' do
+    let(:class_instance) { described_class.new }
+    it 'returns a subset of pitches' do
+      expect(class_instance.bass_pitches.length).to be < class_instance.pitches.length
     end
   end
 end

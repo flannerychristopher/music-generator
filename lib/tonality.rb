@@ -2,7 +2,6 @@
 
 # require './chord'
 
-# Build a Tonality
 class Tonality
   attr_accessor :scale
 
@@ -11,17 +10,12 @@ class Tonality
   end
 
   def pitches
-    result = []
-    lowest_pitch = @scale.first
-    lowest_pitch.step(127, 12) do |octave_of_lowest_pitch|
-      new_octave = map_octave(octave_of_lowest_pitch)
-      result += new_octave
-    end
-    result
+    map_scale_over_octaves(@scale)
   end
 
-  def root_pitches
-    map_octave(@scale.first)
+  def octave_pitches pitch
+    formatted_scale = format_scale([pitch])
+    map_scale_over_octaves(formatted_scale)
   end
 
   def melody_pitches
@@ -42,21 +36,19 @@ class Tonality
 
   private
 
-  # def map_octaves scale
-  #   result = []
-  #   root_pitch = scale.first
-  #   root_pitch.step(127, 12) do |octave_pitch|
-  #     new_octave = scale.map { |pitch| pitch + octave_pitch }
-  #     result += new_octave
-  #   end
-  #   result
-  # end
+  def map_scale_over_octaves scale
+    result = []
+    0.step(127, 12) do |octave_root_pitch|
+      new_octave = map_pitches_over_octave(scale, octave_root_pitch)
+      result += new_octave
+    end
+    result
+  end
 
-
-  def map_octave octave_of_root_pitch
-    @scale.filter_map do |pitch|
-      octave_of_pitch = (octave_of_root_pitch + pitch)
-      octave_of_pitch unless octave_of_pitch > 127
+  def map_pitches_over_octave pitches, octave_root_pitch
+    pitches.filter_map do |pitch|
+      octave_of_pitch = (octave_root_pitch + pitch)
+      octave_of_pitch if octave_of_pitch.between?(0, 127)
     end
   end
 
