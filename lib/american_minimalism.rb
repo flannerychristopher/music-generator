@@ -1,9 +1,6 @@
-require './composition'
-require './composer'
-require './line'
-require './line/bass'
-require './line/melody'
-require './line/ostinato'
+# frozen_string_literal: true
+
+require './lib/composition'
 
 # create a composition in the style of american minimalism
 class AmericanMinimalism < Composition
@@ -19,7 +16,7 @@ class AmericanMinimalism < Composition
     @tonality = Tonality.new
     @melody = Line.new
     @bass = Line.new
-    @ostinato = Ostinato.new
+    @ostinato = Line.new
   end
 
   def perform
@@ -35,8 +32,9 @@ class AmericanMinimalism < Composition
                  velocities: (50..70).to_a,
                  rhythm: bass_rhythm)
 
+    ostinato_pitches = @tonality.octave_pitches(0)
     @composer.compose_line(line: @ostinato,
-                 pitches: @tonality.root_pitches,
+                 pitches: ostinato_pitches,
                  velocities: (50..65).to_a,
                  rhythm: Rhythm.new(length: 1920))
 

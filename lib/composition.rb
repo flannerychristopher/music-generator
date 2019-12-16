@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 require 'midilib/sequence'
-
-require './rhythm'
-require './tonality'
+# require 'ostruct'
+require './lib/composer'
+require './lib/line'
+require './lib/rhythm'
+require './lib/tonality'
 
 class Composition
   include MIDI
 
   def initialize
     @seq = Sequence.new
+    # @seq = OpenStruct.new
   end
 
   private
@@ -21,7 +24,7 @@ class Composition
   end
 
   def write_midi_file
-    file_name = "../midi/#{Time.now}.mid"
+    file_name = "./midi/#{Time.now}.mid"
     File.open(file_name, 'wb') { |file| @seq.write(file) }
   end
 end

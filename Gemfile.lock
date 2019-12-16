@@ -3,6 +3,8 @@ GEM
   specs:
     byebug (11.0.1)
     diff-lcs (1.3)
+    docile (1.3.2)
+    json (2.3.0)
     midilib (2.0.5)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
@@ -17,6 +19,11 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
+    simplecov (0.17.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
 
 PLATFORMS
   ruby
@@ -26,6 +33,7 @@ DEPENDENCIES
   byebug
   midilib
   rspec
+  simplecov
 
 BUNDLED WITH
-   2.0.2
+   2.1.0

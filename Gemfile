@@ -1,6 +1,12 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem "bundler"
-gem "midilib"
-gem "byebug"
-gem "rspec"
+source 'https://rubygems.org'
+
+gem 'bundler'
+gem 'byebug'
+gem 'midilib'
+
+group :test do
+  gem 'rspec'
+  gem 'simplecov', require: false
+end

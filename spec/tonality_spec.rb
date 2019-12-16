@@ -91,7 +91,7 @@ describe Tonality do
     end
   end
 
-  describe '#bass_pitches' do
+  describe '#melody_pitches' do
     let(:class_instance) { described_class.new }
     it 'returns a subset of pitches' do
       expect(class_instance.melody_pitches.length).to be < class_instance.pitches.length
