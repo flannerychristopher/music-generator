@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'midilib/sequence'
-# require 'ostruct'
 require './lib/composer'
 require './lib/line'
 require './lib/rhythm'
@@ -12,7 +11,6 @@ class Composition
 
   def initialize
     @seq = Sequence.new
-    # @seq = OpenStruct.new
   end
 
   private
